@@ -1,5 +1,6 @@
 import requests
 from time import sleep
+import csgoStashExtractor 
 
 currencies = {
     "USD": 1,  # United States dollar
@@ -37,7 +38,7 @@ currencies = {
 }
 
 # https://www.reddit.com/r/GlobalOffensiveTrade/comments/4jd983/discussion_analysis_of_float_value_distributions/ 
-ext = {
+extProb = {
     "Battle-Scarred": 0.1054,
     "Field-Tested": 0.3551,
     "Minimal Wear": 0.2707,
@@ -55,13 +56,6 @@ souvenirProb = {
 }
 
 
-caseProb = {
-    "Mil-Spec": 0.7992,
-    "Restricted": 0.1598,
-    "Classified": 0.0319,
-    "Covert": 0.0063,
-    "Knife/Glove": 0.0025
-}
 
 
 class Item:
@@ -138,10 +132,10 @@ class SouvenirPackage:
         resp = requests.get(self.endpoint, params=payload)
         return resp.json()
 
-    def get_item_price(self, wep, skin, ext):
+    def get_item_price(self, wep, skin, extProb):
         payload = {"appid": 730,
                    "currency": currencies["AUD"],
-                   "market_hash_name": f"{wep} | {skin} ({ext})"}
+                   "market_hash_name": f"{wep} | {skin} ({extProb})"}
         resp = requests.get(self.endpoint, params=payload)
         return resp.json()
 
@@ -151,13 +145,13 @@ class SouvenirPackage:
         for item in self.items:
             print(self.items)
             for skin in item.get_skins():
-                for wear in ext.keys():
+                for wear in extProb.keys():
                     resp = self.get_item_price(item, skin, wear)
                     print(resp)
                     if ("lowest_price" in resp):
                         itemPrice = (float(resp["lowest_price"][3:]
                                      .replace(',', ''))
-                                     * ext.get(wear)
+                                     * extProb.get(wear)
                                      * item.get_rarity_prob(skin))
                         total += itemPrice
                         count += 1
