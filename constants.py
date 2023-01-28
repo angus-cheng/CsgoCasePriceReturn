@@ -1,3 +1,7 @@
+"""
+Souvenir & case probabilities taken from:
+https://www.reddit.com/r/csgomarketforum/wiki/faq/#wiki_cases
+"""
 souvProb = {
     "Consumer": 0.7992,
     "Industrial": 0.1598,
@@ -15,6 +19,10 @@ caseProb = {
     "Rare Special Items": 0.0025
 }
 
+"""
+Probabilities taken from:
+https://blog.csgofloat.com/analysis-of-float-value-and-paint-seed-distribution-in-cs-go/
+"""
 floatProb = {
     "Battle-Scarred": 0.16,
     "Well-Worn": 0.24,
