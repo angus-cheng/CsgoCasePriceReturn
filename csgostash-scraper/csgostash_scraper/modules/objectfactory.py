@@ -94,10 +94,14 @@ class ItemFactory(Factory):
         except ItemHasNoPrice:
             prices = 'This item has no price'
 
+        try:
+            float_range = ws.get_float_range()
+        except ItemHasNoWear:
+            float_range = []
+
         get_rarity = ws.get_rarity()
         rarity = get_rarity.split(' ')[0]
         weapon_type = get_rarity.split(' ')[1]
-        float_range= ws.get_float_range()
 
         data_dict = dict(weapon_type=weapon_type, title=title, desc=description, lore=lore, date_added=date_added,
                          collection=collection, found_in=found_in, rarity=rarity, wears=wears, prices=prices, float_range=float_range)
