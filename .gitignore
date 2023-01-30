@@ -1,2 +1,3 @@
 /.vscode
 /csgostash-scraper/data
+/csgostash-scraper/modules/__pycache__
