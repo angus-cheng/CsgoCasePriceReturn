@@ -21,13 +21,17 @@ def get_item(item, case):
 def get_item_expected_value(item, case):
     wep = get_item(item, case)
     itemPrices = wep["prices"]
-    extPrices = itemPrices
+    print(itemPrices)
+    extPrices = itemPrices.copy()
     for ext in floatProb:
+        if itemPrices[ext] == "Not Possible":
+            continue
         extPrice = float(itemPrices[ext][3:]) * floatProb.get(ext)
         extPrices[ext] = extPrice
 
-    extPrices.pop("StatTrak")
+    extPrices = {key: val for key, val in extPrices.items() if val != "Not Possible"}
     expectedPrice = sum(extPrices.values())
+    print(extPrices)
     return expectedPrice
 
 def get_rarity_prices(rarity, case):
@@ -47,5 +51,5 @@ def get_rarity_prices(rarity, case):
 
 
 # get_rarity_prices("Rare Special Items", "chroma_2")
-print(get_item_expected_value("Desert Eagle | Printstream", "fracture"))
+print(get_item_expected_value("Desert Eagle | Corinthian", "Revolver"))
 # print(get_item("Karambit | Rust Coat", "chroma_2"))

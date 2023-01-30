@@ -368,7 +368,6 @@ class RetrieveWeaponSkin(RetrieveObject):
         min_float = min_float.text.replace('\n', "")
         max_float = max_float.text.replace('\n', "")
         float_range.extend([min_float, max_float])
-        print(float_range)
 
         return float_range
 
