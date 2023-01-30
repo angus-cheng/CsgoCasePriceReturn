@@ -52,7 +52,7 @@ class ItemNoCollection(ScraperException):
 
 
 class ItemHasNoWear(ScraperException):
-    """Exception that is thrown if the item does have wear"""
+    """Exception that is thrown if the item does not have wear"""
     pass
 
 
@@ -363,10 +363,15 @@ class RetrieveWeaponSkin(RetrieveObject):
 
     def get_float_range(self):
         float_range = []
-        min_float = self.parsed_page.find("div", {"class": "wear-min-value"})
-        max_float = self.parsed_page.find("div", {"class": "wear-max-value"})
-        min_float = min_float.text.replace('\n', "")
-        max_float = max_float.text.replace('\n', "")
+
+        try:
+            min_float = self.parsed_page.find("div", {"class": "wear-min-value"})
+            max_float = self.parsed_page.find("div", {"class": "wear-max-value"})
+            min_float = min_float.text.replace('\n', "")
+            max_float = max_float.text.replace('\n', "")
+        except AttributeError:
+            raise ItemHasNoWear()
+
         float_range.extend([min_float, max_float])
 
         return float_range
