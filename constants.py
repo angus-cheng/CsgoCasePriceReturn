@@ -31,6 +31,7 @@ floatProb = {
     "Factory New": 0.03
 }
 
+# Default float range for a skin with float range 0.00 to 1.00
 floatRange = {
     "Battle-Scarred": [0.45, 1.00],
     "Well-Worn": [0.38, 0.45],
