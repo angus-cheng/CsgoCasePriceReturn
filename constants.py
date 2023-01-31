@@ -20,7 +20,7 @@ caseProb = {
 }
 
 """
-Probabilities taken from:
+Float probabilities taken from:
 https://blog.csgofloat.com/analysis-of-float-value-and-paint-seed-distribution-in-cs-go/
 """
 floatProb = {
@@ -29,6 +29,14 @@ floatProb = {
     "Field-Tested": 0.33,
     "Minimal Wear": 0.24,
     "Factory New": 0.03
+}
+
+floatRange = {
+    "Battle-Scarred": [0.45, 1.00],
+    "Well-Worn": [0.38, 0.45],
+    "Field-Tested": [0.15, 0.38],
+    "Minimal Wear": [0.07, 0.15],
+    "Factory New": [0.00, 0.007]
 }
 
 statTrakProb = 0.1
