@@ -1,6 +1,8 @@
 import json
 
-from constants import souvProb, caseProb, floatProb, statTrakProb
+
+from constants import souvProb, caseProb, floatProb, floatRange, statTrakProb
+
 
 def get_item(item, case):
     """
@@ -18,6 +20,7 @@ def get_item(item, case):
             if wep["name"] == item:
                 return wep
 
+
 def get_item_expected_value(item, case):
     wep = get_item(item, case)
     itemPrices = wep["prices"]
@@ -33,6 +36,36 @@ def get_item_expected_value(item, case):
     expectedPrice = sum(extPrices.values())
     print(extPrices)
     return expectedPrice
+
+
+def calc_float_dist(item, case):
+    wep = get_item(item, case)
+    wepFloatRange = wep["float_range"]
+    maxFloat, minFloat = float(wepFloatRange[1]), float(wepFloatRange[0])
+
+    bucketRanges = {}
+    # bucketRanges.append(maxFloat)
+
+    # for bucket in floatProb:
+    #     bucketRange = (maxFloat - minFloat) * floatProb.get(bucket)
+    #     bucketRanges.append(bucketRange)
+
+    battleScarredEndpoint = maxFloat - (1 - floatRange.get("Battle-Scarred")[0]) * (maxFloat - minFloat)
+    wellWornEndpoint = maxFloat - (1 - floatRange.get("Well-Worn")[0]) * (maxFloat - minFloat)
+    fieldTestedEndpoint = maxFloat - (1 - floatRange.get("Field-Tested")[0]) * (maxFloat - minFloat)
+    minimalWearEndpoint = maxFloat - (1 - floatRange.get("Minimal Wear")[0]) * (maxFloat - minFloat)
+    factoryNewEndpoint = maxFloat - (1 - floatRange.get("Factory New")[0]) * (maxFloat - minFloat)
+
+    bucketRanges["Battle-Scarred"] = [battleScarredEndpoint, maxFloat]
+    bucketRanges["Well-Worn"] = [wellWornEndpoint, battleScarredEndpoint]
+    bucketRanges["Field-Tested"] = [wellWornEndpoint, fieldTestedEndpoint]
+    bucketRanges["Minimal Wear"] = [minimalWearEndpoint, wellWornEndpoint]
+    bucketRanges["Factory New"] = [minimalWearEndpoint, minFloat]
+
+    # bucketRanges.append(minFloat)
+
+    return bucketRanges 
+
 
 def get_rarity_prices(rarity, case):
     """
@@ -51,5 +84,7 @@ def get_rarity_prices(rarity, case):
 
 
 # get_rarity_prices("Rare Special Items", "chroma_2")
-print(get_item_expected_value("Desert Eagle | Corinthian", "Revolver"))
+# print(get_item_expected_value("Desert Eagle | Corinthian", "Revolver"))
 # print(get_item("Karambit | Rust Coat", "chroma_2"))
+# print(calc_float_dist("Desert Eagle | Corinthian", "Revolver"))
+print(calc_float_dist("Negev | Loudmouth", "Falchion"))
