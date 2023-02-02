@@ -57,24 +57,40 @@ def calc_float_dist(item, case):
     BucketRange["Bucket 5"] = [minFloat, minimalWearEndpoint]
 
     floatPortions = {}
-    bucketList = (BucketRange.keys())
 
     for bucket, bucketVal in BucketRange.items():
         for wear, wearVal in floatRange.items():
             bucketStart, bucketEnd = bucketVal[0], bucketVal[1]
             wearStart, wearEnd = wearVal[0], wearVal[1]
+            bucketRange = bucketEnd - bucketStart
             if wearStart <= bucketStart and bucketStart <= wearEnd:
                 if bucketEnd >= wearEnd:
-                    print(wear, wearVal)
-                    print(get_prev_float(wear))
+                    if (wearEnd - bucketStart >= 0):
+                        bucketRange -= (wearEnd - bucketStart)
+                        floatPortions[wear] = (wearEnd - bucketStart)
+                        if bucketRange >= 0:
+                            prev_wear = get_prev_wear(wear)
+                            wearEnd = prev_wear[1][1]
+                            wearRange = wearEnd - prev_wear[1][0]
+                            bucketRange -= wearRange
+                            floatPortions[prev_wear[0]] = (wearEnd - bucketStart)
+                            if bucketRange >= 0:
+                                prev_wear = get_prev_wear(prev_wear[0])
+                                wearEnd = prev_wear[1][1]
+                                wearRange = wearEnd - prev_wear[1][0]
+                                bucketRange -= wearRange
+                                floatPortions[prev_wear[0]] = (wearEnd - bucketStart)
 
-    return
+    return floatPortions
+    
+def iter_bucket_ranges(wear, bucket):
+    return 
 
 
-def get_prev_float(wear):
+def get_prev_wear(currentWear):
     floatList = (list(floatRange.keys()))
     for key, item in enumerate(floatList):
-        if item == wear:
+        if item == currentWear:
             return floatList[key - 1], floatRange.get(floatList[key - 1])
 
 
