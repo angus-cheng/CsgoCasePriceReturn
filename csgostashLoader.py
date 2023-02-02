@@ -8,7 +8,7 @@ def get_item(item, case):
     """
     Retrieves item and its expected price
     """
-    file = ("data/cases/json/" + case + "_case.json")
+    file = ("csgostash-scraper/data/cases/json/" + case + "_case.json")
     data = json.load(open(file))
 
     for rarity in data["content"]:
@@ -43,28 +43,39 @@ def calc_float_dist(item, case):
     wepFloatRange = wep["float_range"]
     maxFloat, minFloat = float(wepFloatRange[1]), float(wepFloatRange[0])
 
-    bucketRanges = {}
-    # bucketRanges.append(maxFloat)
-
-    # for bucket in floatProb:
-    #     bucketRange = (maxFloat - minFloat) * floatProb.get(bucket)
-    #     bucketRanges.append(bucketRange)
+    BucketRange = {}
 
     battleScarredEndpoint = maxFloat - (1 - floatRange.get("Battle-Scarred")[0]) * (maxFloat - minFloat)
     wellWornEndpoint = maxFloat - (1 - floatRange.get("Well-Worn")[0]) * (maxFloat - minFloat)
     fieldTestedEndpoint = maxFloat - (1 - floatRange.get("Field-Tested")[0]) * (maxFloat - minFloat)
     minimalWearEndpoint = maxFloat - (1 - floatRange.get("Minimal Wear")[0]) * (maxFloat - minFloat)
-    factoryNewEndpoint = maxFloat - (1 - floatRange.get("Factory New")[0]) * (maxFloat - minFloat)
 
-    bucketRanges["Battle-Scarred"] = [battleScarredEndpoint, maxFloat]
-    bucketRanges["Well-Worn"] = [wellWornEndpoint, battleScarredEndpoint]
-    bucketRanges["Field-Tested"] = [wellWornEndpoint, fieldTestedEndpoint]
-    bucketRanges["Minimal Wear"] = [minimalWearEndpoint, wellWornEndpoint]
-    bucketRanges["Factory New"] = [minimalWearEndpoint, minFloat]
+    BucketRange["Bucket 1"] = [battleScarredEndpoint, maxFloat]
+    BucketRange["Bucket 2"] = [wellWornEndpoint, battleScarredEndpoint]
+    BucketRange["Bucket 3"] = [fieldTestedEndpoint, wellWornEndpoint]
+    BucketRange["Bucket 4"] = [minimalWearEndpoint, fieldTestedEndpoint]
+    BucketRange["Bucket 5"] = [minFloat, minimalWearEndpoint]
 
-    # bucketRanges.append(minFloat)
+    floatPortions = {}
+    bucketList = (BucketRange.keys())
 
-    return bucketRanges 
+    for bucket, bucketVal in BucketRange.items():
+        for wear, wearVal in floatRange.items():
+            bucketStart, bucketEnd = bucketVal[0], bucketVal[1]
+            wearStart, wearEnd = wearVal[0], wearVal[1]
+            if wearStart <= bucketStart and bucketStart <= wearEnd:
+                if bucketEnd >= wearEnd:
+                    print(wear, wearVal)
+                    print(get_prev_float(wear))
+
+    return
+
+
+def get_prev_float(wear):
+    floatList = (list(floatRange.keys()))
+    for key, item in enumerate(floatList):
+        if item == wear:
+            return floatList[key - 1], floatRange.get(floatList[key - 1])
 
 
 def get_rarity_prices(rarity, case):
@@ -78,12 +89,11 @@ def get_rarity_prices(rarity, case):
     for item in data["content"][rarity]:
         item_prices.append(item["prices"])
         # price = float(price[3:])
-    print(item_prices)
 
     return data
 
 
-# get_rarity_prices("Rare Special Items", "chroma_2")
+# print(get_rarity_prices("Rare Special Items", "chroma_2"))
 # print(get_item_expected_value("Desert Eagle | Corinthian", "Revolver"))
 # print(get_item("Karambit | Rust Coat", "chroma_2"))
 # print(calc_float_dist("Desert Eagle | Corinthian", "Revolver"))
