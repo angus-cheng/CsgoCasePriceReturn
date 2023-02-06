@@ -43,22 +43,10 @@ def calc_float_dist(item, case):
     wepFloatRange = wep["float_range"]
     maxFloat, minFloat = float(wepFloatRange[1]), float(wepFloatRange[0])
 
-    BucketRange = {}
-
-    battleScarredEndpoint = maxFloat - (1 - floatRange.get("Battle-Scarred")[0]) * (maxFloat - minFloat)
-    wellWornEndpoint = maxFloat - (1 - floatRange.get("Well-Worn")[0]) * (maxFloat - minFloat)
-    fieldTestedEndpoint = maxFloat - (1 - floatRange.get("Field-Tested")[0]) * (maxFloat - minFloat)
-    minimalWearEndpoint = maxFloat - (1 - floatRange.get("Minimal Wear")[0]) * (maxFloat - minFloat)
-
-    BucketRange["Bucket 1"] = [battleScarredEndpoint, maxFloat]
-    BucketRange["Bucket 2"] = [wellWornEndpoint, battleScarredEndpoint]
-    BucketRange["Bucket 3"] = [fieldTestedEndpoint, wellWornEndpoint]
-    BucketRange["Bucket 4"] = [minimalWearEndpoint, fieldTestedEndpoint]
-    BucketRange["Bucket 5"] = [minFloat, minimalWearEndpoint]
-
     floatPortions = {}
+    bucketRange = calc_bucket_dist(minFloat, maxFloat)
 
-    for bucket, bucketVal in BucketRange.items():
+    for bucket, bucketVal in bucketRange.items():
         for wear, wearVal in floatRange.items():
             bucketStart, bucketEnd = bucketVal[0], bucketVal[1]
             wearStart, wearEnd = wearVal[0], wearVal[1]
@@ -68,13 +56,28 @@ def calc_float_dist(item, case):
                     if (wearEnd - bucketStart >= 0):
                         bucketRange -= (wearEnd - bucketStart)
                         floatPortions[wear] = (wearEnd - bucketStart)
-                        floatPortions.update(iter_bucket_ranges(wear, bucket, bucketRange, bucketStart))
-                        # floatPortions.update(recur_bucket_ranges(wear, bucket, bucketRange, bucketStart))
+                        floatPortions.update(iter_bucket_ranges(wear, bucketRange, bucketStart))
 
     return floatPortions
 
+def calc_bucket_dist(minFloat, maxFloat):
+    bucketRange = {}
+
+    battleScarredEndpoint = maxFloat - (1 - floatRange.get("Battle-Scarred")[0]) * (maxFloat - minFloat)
+    wellWornEndpoint = maxFloat - (1 - floatRange.get("Well-Worn")[0]) * (maxFloat - minFloat)
+    fieldTestedEndpoint = maxFloat - (1 - floatRange.get("Field-Tested")[0]) * (maxFloat - minFloat)
+    minimalWearEndpoint = maxFloat - (1 - floatRange.get("Minimal Wear")[0]) * (maxFloat - minFloat)
+
+    bucketRange["Bucket 1"] = [battleScarredEndpoint, maxFloat]
+    bucketRange["Bucket 2"] = [wellWornEndpoint, battleScarredEndpoint]
+    bucketRange["Bucket 3"] = [fieldTestedEndpoint, wellWornEndpoint]
+    bucketRange["Bucket 4"] = [minimalWearEndpoint, fieldTestedEndpoint]
+    bucketRange["Bucket 5"] = [minFloat, minimalWearEndpoint]
+
+    return bucketRange
+
     
-def recur_bucket_ranges(wear, bucket, bucketRange, bucketStart):
+def recur_bucket_ranges(wear, bucketRange, bucketStart):
     floatPortions = {}
     if bucketRange >= 0:
         prev_wear = get_prev_wear(wear)
@@ -84,10 +87,10 @@ def recur_bucket_ranges(wear, bucket, bucketRange, bucketStart):
         floatPortions[prev_wear[0]] = (wearEnd - bucketStart)
         return floatPortions
     else:
-        return recur_bucket_ranges(wear, bucket, bucketRange, bucketStart)
+        return recur_bucket_ranges(wear, bucketRange, bucketStart)
 
 
-def iter_bucket_ranges(wear, bucket, bucketRange, bucketStart):
+def iter_bucket_ranges(wear, bucketRange, bucketStart):
     floatPortions = {}
     callStack = []
     callStack.append(wear)
