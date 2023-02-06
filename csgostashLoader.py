@@ -22,6 +22,7 @@ def get_item(item, case):
 
 
 def get_item_expected_value(item, case):
+    """Retrives expected price of an item"""
     wep = get_item(item, case)
     itemPrices = wep["prices"]
     print(itemPrices)
@@ -39,6 +40,7 @@ def get_item_expected_value(item, case):
 
 
 def calc_float_dist(item, case):
+    """Calculates the float distribution of an item"""
     wep = get_item(item, case)
     wepFloatRange = wep["float_range"]
     maxFloat, minFloat = float(wepFloatRange[1]), float(wepFloatRange[0])
@@ -56,11 +58,12 @@ def calc_float_dist(item, case):
                     if (wearEnd - bucketStart >= 0):
                         bucketRange -= (wearEnd - bucketStart)
                         floatPortions[wear] = (wearEnd - bucketStart)
-                        floatPortions.update(iter_bucket_ranges(wear, bucketRange, bucketStart))
+                        floatPortions.update(iter_float_portions(wear, bucketRange, bucketStart))
 
     return floatPortions
 
 def calc_bucket_dist(minFloat, maxFloat):
+    """Calculates the bucket distribution of an item"""
     bucketRange = {}
 
     battleScarredEndpoint = maxFloat - (1 - floatRange.get("Battle-Scarred")[0]) * (maxFloat - minFloat)
@@ -77,7 +80,8 @@ def calc_bucket_dist(minFloat, maxFloat):
     return bucketRange
 
     
-def recur_bucket_ranges(wear, bucketRange, bucketStart):
+def recur_float_portions(wear, bucketRange, bucketStart):
+    """Recursively calculates the float portions of an item bucket distribution"""
     floatPortions = {}
     if bucketRange >= 0:
         prev_wear = get_prev_wear(wear)
@@ -87,10 +91,11 @@ def recur_bucket_ranges(wear, bucketRange, bucketStart):
         floatPortions[prev_wear[0]] = (wearEnd - bucketStart)
         return floatPortions
     else:
-        return recur_bucket_ranges(wear, bucketRange, bucketStart)
+        return recur_float_portions(wear, bucketRange, bucketStart)
 
 
-def iter_bucket_ranges(wear, bucketRange, bucketStart):
+def iter_float_portions(wear, bucketRange, bucketStart):
+    """Iteratively calculates the float portions of an item bucket distribution"""
     floatPortions = {}
     callStack = []
     callStack.append(wear)
@@ -111,6 +116,7 @@ def iter_bucket_ranges(wear, bucketRange, bucketStart):
 
 
 def get_prev_wear(currentWear):
+    """Retrieves the previous float wear given the current wear of an item"""
     floatList = (list(floatRange.keys()))
     for key, item in enumerate(floatList):
         if item == currentWear:
