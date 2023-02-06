@@ -68,23 +68,43 @@ def calc_float_dist(item, case):
                     if (wearEnd - bucketStart >= 0):
                         bucketRange -= (wearEnd - bucketStart)
                         floatPortions[wear] = (wearEnd - bucketStart)
-                        if bucketRange >= 0:
-                            prev_wear = get_prev_wear(wear)
-                            wearEnd = prev_wear[1][1]
-                            wearRange = wearEnd - prev_wear[1][0]
-                            bucketRange -= wearRange
-                            floatPortions[prev_wear[0]] = (wearEnd - bucketStart)
-                            if bucketRange >= 0:
-                                prev_wear = get_prev_wear(prev_wear[0])
-                                wearEnd = prev_wear[1][1]
-                                wearRange = wearEnd - prev_wear[1][0]
-                                bucketRange -= wearRange
-                                floatPortions[prev_wear[0]] = (wearEnd - bucketStart)
+                        floatPortions.update(iter_bucket_ranges(wear, bucket, bucketRange, bucketStart))
+                        # floatPortions.update(recur_bucket_ranges(wear, bucket, bucketRange, bucketStart))
 
     return floatPortions
+
     
-def iter_bucket_ranges(wear, bucket):
-    return 
+def recur_bucket_ranges(wear, bucket, bucketRange, bucketStart):
+    floatPortions = {}
+    if bucketRange >= 0:
+        prev_wear = get_prev_wear(wear)
+        wearEnd = prev_wear[1][1]
+        wearRange = wearEnd - prev_wear[1][0]
+        bucketRange -= wearRange
+        floatPortions[prev_wear[0]] = (wearEnd - bucketStart)
+        return floatPortions
+    else:
+        return recur_bucket_ranges(wear, bucket, bucketRange, bucketStart)
+
+
+def iter_bucket_ranges(wear, bucket, bucketRange, bucketStart):
+    floatPortions = {}
+    callStack = []
+    callStack.append(wear)
+
+    while callStack:
+        if bucketRange >= 0:
+            wear = callStack.pop()
+            prev_wear = get_prev_wear(wear)
+            wearEnd = prev_wear[1][1]
+            wearRange = wearEnd - prev_wear[1][0]
+            bucketRange -= wearRange
+            floatPortions[prev_wear[0]] = (wearEnd - bucketStart)
+            callStack.append(next(iter(get_prev_wear(wear))))
+        else:
+            break
+
+    return floatPortions
 
 
 def get_prev_wear(currentWear):
