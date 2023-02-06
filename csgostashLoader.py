@@ -62,6 +62,7 @@ def calc_float_dist(item, case):
 
     return floatPortions
 
+
 def calc_bucket_dist(minFloat, maxFloat):
     """Calculates the bucket distribution of an item"""
     bucketRange = {}
