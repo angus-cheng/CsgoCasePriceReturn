@@ -28,3 +28,5 @@ df = pd.DataFrame(data)
 df = df.iloc[:, 0].dropna().apply(pd.Series)
 
 df.to_csv('./items.csv', index=False)
+
+print('test')
