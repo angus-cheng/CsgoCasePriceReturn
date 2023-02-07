@@ -144,3 +144,5 @@ def get_rarity_prices(rarity, case):
 # print(get_item("Karambit | Rust Coat", "chroma_2"))
 # print(calc_float_dist("Desert Eagle | Corinthian", "Revolver"))
 print(calc_float_dist("Negev | Loudmouth", "Falchion"))
+
+print("hello")
