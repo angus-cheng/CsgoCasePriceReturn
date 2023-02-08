@@ -8,7 +8,7 @@ def get_item(item, case):
     """
     Retrieves item and its expected price
     """
-    file = ("csgostash-scraper/data/cases/json/" + case + "_case.json")
+    file = ("data/cases/json/" + case + "_case.json")
     data = json.load(open(file))
 
     for rarity in data["content"]:
@@ -48,17 +48,23 @@ def calc_float_dist(item, case):
     floatPortions = {}
     bucketRange = calc_bucket_dist(minFloat, maxFloat)
 
+# error somewhere in here:
     for bucket, bucketVal in bucketRange.items():
         for wear, wearVal in floatRange.items():
             bucketStart, bucketEnd = bucketVal[0], bucketVal[1]
             wearStart, wearEnd = wearVal[0], wearVal[1]
             bucketRange = bucketEnd - bucketStart
-            if wearStart <= bucketStart and bucketStart <= wearEnd:
-                if bucketEnd >= wearEnd:
-                    if (wearEnd - bucketStart >= 0):
-                        bucketRange -= (wearEnd - bucketStart)
-                        floatPortions[wear] = (wearEnd - bucketStart)
-                        floatPortions.update(iter_float_portions(wear, bucketRange, bucketStart))
+            # if wearStart <= bucketStart and bucketStart <= wearEnd:
+            #     if bucketEnd >= wearEnd:
+            #         if (wearEnd - bucketStart >= 0):
+            #             bucketRange -= (wearEnd - bucketStart)
+            #             floatPortions[wear] = (wearEnd - bucketStart)
+            #             floatPortions.update(iter_float_portions(wear, bucketRange, bucketStart))
+            if bucketEnd >= wearEnd:
+                if (wearEnd - bucketStart >= 0):
+                    bucketRange -= (wearEnd - bucketStart)
+                    floatPortions[wear] = (wearEnd - bucketStart)
+                    floatPortions.update(iter_float_portions(wear, bucketRange, bucketStart))
 
     return floatPortions
 
@@ -142,7 +148,12 @@ def get_rarity_prices(rarity, case):
 # print(get_rarity_prices("Rare Special Items", "chroma_2"))
 # print(get_item_expected_value("Desert Eagle | Corinthian", "Revolver"))
 # print(get_item("Karambit | Rust Coat", "chroma_2"))
+<<<<<<< Updated upstream
 # print(calc_float_dist("Desert Eagle | Corinthian", "Revolver"))
 print(calc_float_dist("Negev | Loudmouth", "Falchion"))
 
 print("test")
+=======
+print(calc_float_dist("Negev | Loudmouth", "Falchion"))
+print(sum(calc_float_dist("Negev | Loudmouth", "Falchion").values()))
+>>>>>>> Stashed changes
