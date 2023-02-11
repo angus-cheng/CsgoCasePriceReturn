@@ -51,9 +51,6 @@ def calc_float_dist(item, case):
 # error somewhere in here:
     for bucket, bucketVal in bucketRange.items():
         for wear, wearVal in floatRange.items():
-            bucketStart, bucketEnd = bucketVal[0], bucketVal[1]
-            wearStart, wearEnd = wearVal[0], wearVal[1]
-            bucketRange = bucketEnd - bucketStart
             # if wearStart <= bucketStart and bucketStart <= wearEnd:
             #     if bucketEnd >= wearEnd:
             #         if (wearEnd - bucketStart >= 0):
@@ -65,6 +62,11 @@ def calc_float_dist(item, case):
                     bucketRange -= (wearEnd - bucketStart)
                     floatPortions[wear] = (wearEnd - bucketStart)
                     floatPortions.update(iter_float_portions(wear, bucketRange, bucketStart))
+            # portions = iter_float_portions(wear, bucketVal, wearVal)
+            # for key, val in portions.items():
+            #     if key in floatPortions:
+            #         val += floatPortions.get(key)
+            #     floatPortions[key] = val
 
     return floatPortions
 
@@ -101,23 +103,36 @@ def recur_float_portions(wear, bucketRange, bucketStart):
         return recur_float_portions(wear, bucketRange, bucketStart)
 
 
-def iter_float_portions(wear, bucketRange, bucketStart):
+def iter_float_portions(wear, bucketVal, wearVal):
     """Iteratively calculates the float portions of an item bucket distribution"""
+    bucketStart, bucketEnd = bucketVal[0], bucketVal[1]
+    wearStart, wearEnd = wearVal[0], wearVal[1]
+
+    bucketRange = bucketEnd - bucketStart
+    wearRange = wearEnd - wearStart
+
     floatPortions = {}
     callStack = []
     callStack.append(wear)
 
     while callStack:
-        if bucketRange >= 0:
-            wear = callStack.pop()
-            prev_wear = get_prev_wear(wear)
-            wearEnd = prev_wear[1][1]
-            wearRange = wearEnd - prev_wear[1][0]
-            bucketRange -= wearRange
-            floatPortions[prev_wear[0]] = (wearEnd - bucketStart)
-            callStack.append(next(iter(get_prev_wear(wear))))
+        wear = callStack.pop()
+        # Case 1
+        if bucketStart >= wearStart and bucketEnd <= wearEnd:
+            floatPortions[wear] = bucketRange
+        # Case 2
+        elif bucketStart <= wearStart and bucketEnd >= wearEnd:
+            floatPortions[wear] = wearRange
+        # Case 3
+        elif bucketStart <= wearStart and bucketEnd <= wearEnd:
+            print(bucketStart, wearStart, bucketEnd, wearEnd)
+            floatPortions[wear] = bucketEnd - wearStart
+            print(floatPortions)
+        # Case 4
+        # elif bucketStart >= wearStart and bucketEnd >= wearEnd:
+        #     floatPortions[wear] = wearEnd - bucketStart
         else:
-            break
+            continue 
 
     return floatPortions
 
@@ -148,12 +163,6 @@ def get_rarity_prices(rarity, case):
 # print(get_rarity_prices("Rare Special Items", "chroma_2"))
 # print(get_item_expected_value("Desert Eagle | Corinthian", "Revolver"))
 # print(get_item("Karambit | Rust Coat", "chroma_2"))
-<<<<<<< Updated upstream
 # print(calc_float_dist("Desert Eagle | Corinthian", "Revolver"))
 print(calc_float_dist("Negev | Loudmouth", "Falchion"))
-
-print("test")
-=======
-print(calc_float_dist("Negev | Loudmouth", "Falchion"))
-print(sum(calc_float_dist("Negev | Loudmouth", "Falchion").values()))
->>>>>>> Stashed changes
+# print(sum(calc_float_dist("Negev | Loudmouth", "Falchion").values()))
