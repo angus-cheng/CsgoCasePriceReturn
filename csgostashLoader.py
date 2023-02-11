@@ -148,12 +148,6 @@ def get_rarity_prices(rarity, case):
 # print(get_rarity_prices("Rare Special Items", "chroma_2"))
 # print(get_item_expected_value("Desert Eagle | Corinthian", "Revolver"))
 # print(get_item("Karambit | Rust Coat", "chroma_2"))
-<<<<<<< Updated upstream
 # print(calc_float_dist("Desert Eagle | Corinthian", "Revolver"))
 print(calc_float_dist("Negev | Loudmouth", "Falchion"))
-
-print("test")
-=======
-print(calc_float_dist("Negev | Loudmouth", "Falchion"))
 print(sum(calc_float_dist("Negev | Loudmouth", "Falchion").values()))
->>>>>>> Stashed changes
