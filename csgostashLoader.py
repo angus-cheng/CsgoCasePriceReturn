@@ -54,17 +54,18 @@ def calc_float_dist(item, case):
             bucketStart, bucketEnd = bucketVal[0], bucketVal[1]
             wearStart, wearEnd = wearVal[0], wearVal[1]
             bucketRange = bucketEnd - bucketStart
-            # if wearStart <= bucketStart and bucketStart <= wearEnd:
-            #     if bucketEnd >= wearEnd:
-            #         if (wearEnd - bucketStart >= 0):
-            #             bucketRange -= (wearEnd - bucketStart)
-            #             floatPortions[wear] = (wearEnd - bucketStart)
-            #             floatPortions.update(iter_float_portions(wear, bucketRange, bucketStart))
             if bucketEnd >= wearEnd:
-                if (wearEnd - bucketStart >= 0):
+                if (bucketStart < wearEnd):
                     bucketRange -= (wearEnd - bucketStart)
                     floatPortions[wear] = (wearEnd - bucketStart)
                     floatPortions.update(iter_float_portions(wear, bucketRange, bucketStart))
+                    # portions = iter_float_portions(wear, bucketRange, bucketStart)
+                    # for key, val in portions.items():
+                    #     if key in floatPortions:
+                    #         val += floatPortions.get(key)
+                    #         floatPortions[key] = val
+                    #     else:
+                    #         floatPortions.update(portions)
 
     return floatPortions
 
@@ -85,20 +86,6 @@ def calc_bucket_dist(minFloat, maxFloat):
     bucketRange["Bucket 5"] = [minFloat, minimalWearEndpoint]
 
     return bucketRange
-
-    
-def recur_float_portions(wear, bucketRange, bucketStart):
-    """Recursively calculates the float portions of an item bucket distribution"""
-    floatPortions = {}
-    if bucketRange >= 0:
-        prev_wear = get_prev_wear(wear)
-        wearEnd = prev_wear[1][1]
-        wearRange = wearEnd - prev_wear[1][0]
-        bucketRange -= wearRange
-        floatPortions[prev_wear[0]] = (wearEnd - bucketStart)
-        return floatPortions
-    else:
-        return recur_float_portions(wear, bucketRange, bucketStart)
 
 
 def iter_float_portions(wear, bucketRange, bucketStart):
