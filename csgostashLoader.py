@@ -57,16 +57,16 @@ def calc_float_dist(item, case):
             #             bucketRange -= (wearEnd - bucketStart)
             #             floatPortions[wear] = (wearEnd - bucketStart)
             #             floatPortions.update(iter_float_portions(wear, bucketRange, bucketStart))
-            if bucketEnd >= wearEnd:
-                if (wearEnd - bucketStart >= 0):
-                    bucketRange -= (wearEnd - bucketStart)
-                    floatPortions[wear] = (wearEnd - bucketStart)
-                    floatPortions.update(iter_float_portions(wear, bucketRange, bucketStart))
-            # portions = iter_float_portions(wear, bucketVal, wearVal)
-            # for key, val in portions.items():
-            #     if key in floatPortions:
-            #         val += floatPortions.get(key)
-            #     floatPortions[key] = val
+            # if bucketEnd >= wearEnd:
+            #     if (wearEnd - bucketStart >= 0):
+            #         bucketRange -= (wearEnd - bucketStart)
+            #         floatPortions[wear] = (wearEnd - bucketStart)
+            #         floatPortions.update(iter_float_portions(wear, bucketRange, bucketStart))
+            portions = iter_float_portions(wear, bucketVal, wearVal)
+            for key, val in portions.items():
+                if key in floatPortions:
+                    val += floatPortions.get(key)
+                floatPortions[key] = val
 
     return floatPortions
 
@@ -112,25 +112,23 @@ def iter_float_portions(wear, bucketVal, wearVal):
     wearRange = wearEnd - wearStart
 
     floatPortions = {}
-    callStack = []
-    callStack.append(wear)
+    callStack = {}
+    callStack.update({wear: bucketVal})
 
     while callStack:
-        wear = callStack.pop()
+        wear = callStack.popitem()
         # Case 1
         if bucketStart >= wearStart and bucketEnd <= wearEnd:
-            floatPortions[wear] = bucketRange
+            floatPortions[wear[0]] = bucketRange
         # Case 2
         elif bucketStart <= wearStart and bucketEnd >= wearEnd:
-            floatPortions[wear] = wearRange
+            floatPortions[wear[0]] = wearRange
         # Case 3
         elif bucketStart <= wearStart and bucketEnd <= wearEnd:
-            print(bucketStart, wearStart, bucketEnd, wearEnd)
-            floatPortions[wear] = bucketEnd - wearStart
-            print(floatPortions)
-        # Case 4
-        # elif bucketStart >= wearStart and bucketEnd >= wearEnd:
-        #     floatPortions[wear] = wearEnd - bucketStart
+            print(wear, bucketStart, wearStart, bucketEnd, wearEnd)
+            updatedBucketRange = wear[1][1] - wearStart
+            floatPortions[wear[0]] = updatedBucketRange
+            # callStack.update({get_prev_wear(wear[0]): [bucketStart, updatedBucketRange]})
         else:
             continue 
 
@@ -142,7 +140,7 @@ def get_prev_wear(currentWear):
     floatList = (list(floatRange.keys()))
     for key, item in enumerate(floatList):
         if item == currentWear:
-            return floatList[key - 1], floatRange.get(floatList[key - 1])
+            return floatList[key - 1]  #, floatRange.get(floatList[key - 1])
 
 
 def get_rarity_prices(rarity, case):
